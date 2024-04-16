@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MyGann Grades</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
+</head>
+<body>
+    <div id="settings-container" style="display: none;">
+        <form id="settingsForm">
+            <label for="firstSemesterPath">First Semester Path:</label>
+            <input type="text" id="firstSemesterPath" name="firstSemesterPath" value="{{ first_semester_path }}"><br><br>
+            
+            <label for="secondSemesterPath">Download Path:</label>
+            <input type="text" id="secondSemesterPath" name="secondSemesterPath" value="{{ second_semester_path }}"><br><br>
+            
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" value="{{ username }}"><br><br>
+            
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" value="{{ password }}"><br><br>
+            
+            <label for="year">Year(ABCD - ABCD):</label>
+            <input type="text" id="year" name="year" value="{{ year }}"><br><br>
+            
+            <label for="isPrinting">Is Printing:</label>
+            <input type="checkbox" id="isPrinting" name="isPrinting" {{ 'checked' if is_printing else '' }}><br><br>
+            
+            <label for="headless">Running Headless:</label>
+            <input type="checkbox" id="headless" name="headless" {{ 'checked' if headless else '' }}><br><br>
+            
+            <label for="download_first_semester">Download First Semester:</label>
+            <input type="checkbox" id="download_first_semester" name="download_first_semester" {{ 'checked' if download_first_semester else '' }}><br><br>
+
+            <label for="download_second_semester">Download Second Semester:</label>
+            <input type="checkbox" id="download_second_semester" name="download_second_semester" {{ 'checked' if download_second_semester else '' }}><br><br>
+
+            <button type="submit">Update Settings</button>
+
+        </form>
+    </div>
+
+    <hr>
+
+    <button id="settingsButton">Settings</button>
+    <button id="calculateButton" onclick="calculateGrades()">Calculate Grades</button>
+
+    <div id="result-container"></div>
+    <div id="progress-container"></div>
+
+    <script>
+        var settingsContainer = document.getElementById('settings-container');
+        var settingsButton = document.getElementById('settingsButton');
+
+        // Toggle settings menu visibility on click of the Settings button
+        settingsButton.addEventListener('click', function() {
+            settingsContainer.style.display = 'block';
+            settingsButton.style.display = 'none';
+            // } else {
+            //     settingsContainer.style.display = 'none';
+            // }
+        });
+        
+        var socket = io.connect('http://' + document.domain + ':' + location.port + '/task');
+
+        socket.on('progress', function(msg) {
+            var progressContainer = document.getElementById('progress-container');
+            progressContainer.innerHTML = '';
+
+            var progressMessage = document.createElement('p');
+            progressMessage.textContent = msg.message;
+            progressContainer.appendChild(progressMessage);
+
+            var calculateButton = document.getElementById('calculateButton');
+            calculateButton.style.display = 'none';
+            settingsButton.style.display = 'none';
+            settingsContainer.style.display = 'none';
+        });
+
+        function calculateGrades() {
+            var progressContainer = document.getElementById('progress-container');
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/calculate-grades', true);
+            xhr.send();
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var gradesData = JSON.parse(xhr.responseText);
+                    var resultContainer = document.getElementById('result-container');
+                    resultContainer.innerHTML = '';
+
+                    gradesData.forEach(function(grade) {
+                        var gradeBlock = document.createElement('div');
+                        gradeBlock.classList.add('grade-block');
+
+                        var className = document.createElement('h3');
+                        className.textContent = grade.class_name;
+                        gradeBlock.appendChild(className);
+
+                        var pointsGrade = document.createElement('p');
+                        pointsGrade.textContent = grade.points_grade;
+                        gradeBlock.appendChild(pointsGrade);
+
+                        var percentGrade = document.createElement('p');
+                        percentGrade.textContent = grade.percent_grade + '%';
+                        gradeBlock.appendChild(percentGrade);
+
+                        var letterGrade = document.createElement('p');
+                        letterGrade.textContent = grade.letter_grade;
+                        gradeBlock.appendChild(letterGrade);
+
+                        resultContainer.appendChild(gradeBlock);
+                    });
+
+                    var calculateButton = document.getElementById('calculateButton');
+                    calculateButton.style.display = 'none';
+                    settingsButton.style.display = 'none';
+                    settingsContainer.style.display = 'none';
+                    progressContainer.style.display = 'none'; 
+
+                } else {
+                    alert('Failed to download grades, this happens occasionally. Please try again.');
+                }
+            };
+        }
+
+        // Handle form submission
+        document.getElementById('settingsForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var form = event.target;
+
+            // Set checkbox values based on checked state
+            var isPrintingValue = document.getElementById('isPrinting').checked;
+            var download_second_semester = document.getElementById('download_second_semester').checked;
+            var headless = document.getElementById('headless').checked;
+            var download_first_semester = document.getElementById('download_first_semester').checked;
+
+            // Set form data including checkbox values
+            var formData = new FormData(form);
+            formData.set('isPrinting', isPrintingValue);
+            formData.set('download_second_semester', download_second_semester);
+            formData.set('headless', headless);
+            formData.set('download_first_semester', download_first_semester);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/update-settings', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                } else {
+                    alert('Failed to update settings');
+                }
+            };
+
+            xhr.send(JSON.stringify(Object.fromEntries(formData)));
+            settingsContainer.style.display = 'none';
+            settingsButton.style.display = 'block';
+        });
+    </script>
+</body>
+</html>

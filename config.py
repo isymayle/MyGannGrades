@@ -1,0 +1,9 @@
+first_semester_path = '/Users/isabella/Desktop/website2/grade_reports/first_semester.pdf/first_semester.pdf'
+second_semester_path = '/Users/isabella/Desktop/website2/grade_reports/second_semester.pdf'
+username = '27imayle'
+password = '29poSt92'
+year = '2023 - 2024'
+is_printing = False
+download_second_semester = False
+headless = False
+download_first_semester = True

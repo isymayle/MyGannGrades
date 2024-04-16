@@ -1,0 +1,112 @@
+/* Custom Theme */
+
+
+@font-face {
+    font-family: 'KanitBold';
+    src: url('Kanit/Kanit-Bold.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'KanitMedium';
+    src: url('Kanit/Kanit-Medium.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'KanitRegular';
+    src: url('Kanit/Kanit-Regular.ttf') format('truetype');
+}
+
+:root {
+    --main-color: #990D2F;
+    --dark-color: #1F0915;
+    --white-color: #F9F9FE;
+    --gray-color: #D2D3D4;
+    --accent-color: #ffd642;
+    --large: 36px;
+    --medium: 24px;
+    --small: 12px;
+}
+
+body {
+    font-family: 'KanitRegular';
+    font-size: var(--medium);
+    color: var(--dark-color);
+    padding: 20px;
+}
+
+button {
+    font-family: 'KanitMedium';
+    font-size: var(--medium);
+    color: var(--dark-color);
+    background-color: var(--gray-color);
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+input[type="text"],
+input[type="password"] {
+    font-family: 'KanitRegular';
+    font-size: var(--medium); 
+    padding: 5px;
+    border: 0px solid var(--dark-color);
+    background-color: var(--gray-color);
+    color: var(--dark-color);
+    margin-bottom: 10px;
+}
+
+/* Custom checkbox style */
+input[type="checkbox"] {
+    width: 40px; /* Width of the custom checkbox */
+    height: 40px; /* Height of the custom checkbox */
+    border: 0px solid var(--dark-color);
+    outline: none;
+    cursor: pointer;
+    vertical-align: middle; /* Align vertically with label text */
+}
+
+input[type=checkbox]:checked::before {
+    border: none;
+    background-color: var(--gray-color);
+  }
+
+/* Checked state style for custom checkbox */
+input[type="checkbox"]:checked {
+    accent-color: var(--main-color); /* Background color when checked */
+}
+
+
+
+/* Label style for checkbox */
+label {
+    font-family: 'KanitMedium';
+    font-size: var(--medium);
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* Style the checkbox inside the label */
+.checkbox-label input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.grade-block {
+    border: 14px solid var(--gray-color);
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: var(--white-color);
+}
+
+/* title */
+.grade-block h3 {
+    font-family: 'KanitMedium';
+    font-size: var(--medium);
+    margin-bottom: 10px;
+}
+
+/* text */
+.grade-block p {
+    font-family: 'KanitRegular';
+    font-size: var(--small);
+    margin: 5px 0;
+}
